@@ -665,21 +665,20 @@
 
       // Initialize HLS.js for M3U8 support with custom headers
       const source = "https://media.onestream.studio/content/hls/live/live_4596844_y1pzsh601/hls.m3u8";
-      let hls;
-      
-      if (Hls.isSupported()) {
-        hls = new Hls({
-          enableWorker: false,
-          lowLatencyMode: true,
-          backBufferLength: 90,
-          xhrSetup: function (xhr) {
-            xhr.setRequestHeader("Ortmp", "south-asia-mumbai-1");
-            xhr.setRequestHeader("X-Origin-Host", "south-asia-mumbai-1");
-            xhr.setRequestHeader("vKey", "live_4596844_y1pzsh601?auth=p_auth_4596844_z762m5d6x);
-            xhr.setRequestHeader("Referer", "https://app.onestream.live/multicast");
-            xhr.setRequestHeader("User-Agent", "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36");
-          }
-        });
+
+  if (Hls.isSupported()) {
+    const hls = new Hls({
+      enableWorker: false,
+      lowLatencyMode: true,
+      backBufferLength: 90,
+      xhrSetup: function (xhr) {
+        xhr.setRequestHeader("Ortmp", "south-asia-mumbai-1");
+        xhr.setRequestHeader("X-Origin-Host", "south-asia-mumbai-1");
+        xhr.setRequestHeader("vKey", "live_4596844_y1pzsh601?auth=p_auth_4596844_z762m5d6x");
+        xhr.setRequestHeader("Referer", "https://app.onestream.live/multicast");
+        xhr.setRequestHeader("User-Agent", "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36");
+      }
+    });
         
         hls.loadSource(source);
         hls.attachMedia(mainVideo);
