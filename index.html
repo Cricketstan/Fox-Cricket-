@@ -4,28 +4,15 @@
   <title>Fox Cricket</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
   <meta name="referrer" content="no-referrer"/>
-  
-  <!-- Plyr CSS -->
+
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css"/>
-
-  <!-- HLS.js -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
-  <!-- Plyr JS -->
   <script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.polyfilled.js"></script>
 
   <style>
-    body {
-      background-color: #000;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-    }
-    html, body {
-      height: 100%;
-      width: 100%;
-    }
-    .video-container {
+    body { background:#000;margin:0;overflow:hidden;height:100vh;width:100vw; }
+    video { width:100%;height:100%;object-fit:contain;background:#000; }
+video-container {
       position: relative;
       width: 100%;
       height: 100%;
@@ -47,36 +34,59 @@
   </style>
 </head>
 <body>
-  <div class="video-container">
-    <video autoplay playsinline muted id="player" controls preload="metadata"></video>
-  </div>
+  <video autoplay playsinline muted id="player" controls preload="metadata"></video>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const video = document.getElementById("player");
-      const source = "https://media.onestream.studio/content/hls/live/live_4596844_y1pzsh601/hls.m3u8";
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const video = document.getElementById("player");
+  const source = "https://rumble.com/live-hls-dvr/6z4aec/playlist.m3u8?level=1";
 
-      if (Hls.isSupported()) {
-        const hls = new Hls({
-          xhrSetup: function (xhr) {
-            xhr.setRequestHeader("Ortmp", "south-asia-mumbai-1");
-            xhr.setRequestHeader("X-Origin-Host", "south-asia-mumbai-1");
-            xhr.setRequestHeader("vKey", "live_4596844_y1pzsh601?auth=p_auth_4596844_z762m5d6x");
-            xhr.setRequestHeader("Referer", "https://app.onestream.live/multicast");
-            xhr.setRequestHeader("User-Agent", "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36");
-          }
-        });
-        hls.loadSource(source);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
-      } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-        video.src = source;
-        video.addEventListener("loadedmetadata", () => video.play());
+  let hls, availableQualities = [];
+
+  const defaultOptions = {
+    autoplay: true,
+    quality: {
+      default: 0,
+      options: [],
+      forced: true,
+      onChange: (newQuality) => {
+        if (hls) {
+          hls.levels.forEach((level, index) => {
+            if (level.height === newQuality) {
+              hls.currentLevel = index;
+            }
+          });
+        }
       }
+    }
+  };
 
-      new Plyr(video, { autoplay: true });
+  if (Hls.isSupported()) {
+    hls = new Hls({
+      xhrSetup: function (xhr) {
+        xhr.setRequestHeader("Ortmp", "south-asia-mumbai-1");
+        xhr.setRequestHeader("X-Origin-Host", "south-asia-mumbai-1");
+        xhr.setRequestHeader("vKey", "live_4596844_y1pzsh601?auth=p_auth_4596844_z762m5d6x");
+        xhr.setRequestHeader("Referer", "https://app.onestream.live/multicast");
+        xhr.setRequestHeader("User-Agent", "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36");
+      }
     });
 
-  </script>
+    hls.loadSource(source);
+    hls.attachMedia(video);
+
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      availableQualities = hls.levels.map(l => l.height).sort((a, b) => b - a);
+      defaultOptions.quality.options = ["Auto", ...availableQualities];
+      player = new Plyr(video, defaultOptions);
+    });
+
+  } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+    video.src = source;
+    player = new Plyr(video, defaultOptions);
+  }
+});
+</script>
+
 </body>
 </html>
