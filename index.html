@@ -1,92 +1,34 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>Fox Cricket</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-  <meta name="referrer" content="no-referrer"/>
-
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css"/>
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-  <script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.polyfilled.js"></script>
-
-  <style>
-    body { background:#000;margin:0;overflow:hidden;height:100vh;width:100vw; }
-    video { width:100%;height:100%;object-fit:contain;background:#000; }
-video-container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    video {
-      width: 100%;
-      height: 100%;
-      object-fit: contain; /* keeps proper aspect ratio */
-      background: #000;
-    }
-    .plyr {
-      height: 100%;
-      width: 100%;
-    }
-  </style>
-</head>
-<body>
-  <video autoplay playsinline muted id="player" controls preload="metadata"></video>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const video = document.getElementById("player");
-  const source = "https://rumble.com/live-hls-dvr/6z4aec/playlist.m3u8";
-
-  let hls, availableQualities = [];
-
-  const defaultOptions = {
-    autoplay: true,
-    quality: {
-      default: 0,
-      options: [],
-      forced: true,
-      onChange: (newQuality) => {
-        if (hls) {
-          hls.levels.forEach((level, index) => {
-            if (level.height === newQuality) {
-              hls.currentLevel = index;
-            }
-          });
-        }
-      }
-    }
-  };
-
-  if (Hls.isSupported()) {
-    hls = new Hls({
-      xhrSetup: function (xhr) {
-        xhr.setRequestHeader("Ortmp", "south-asia-mumbai-1");
-        xhr.setRequestHeader("X-Origin-Host", "south-asia-mumbai-1");
-        xhr.setRequestHeader("vKey", "live_4596844_y1pzsh601?auth=p_auth_4596844_z762m5d6x");
-        xhr.setRequestHeader("Referer", "https://app.onestream.live/multicast");
-        xhr.setRequestHeader("User-Agent", "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36");
-      }
-    });
-
-    hls.loadSource(source);
-    hls.attachMedia(video);
-
-    hls.on(Hls.Events.MANIFEST_PARSED, () => {
-      availableQualities = hls.levels.map(l => l.height).sort((a, b) => b - a);
-      defaultOptions.quality.options = ["Auto", ...availableQualities];
-      player = new Plyr(video, defaultOptions);
-    });
-
-  } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-    video.src = source;
-    player = new Plyr(video, defaultOptions);
-  }
-});
-</script>
-
-</body>
+<html lang="en"> 
+<head> 
+  <meta charset="UTF-8"> 
+  <title>jw player</title> 
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <script src="//content.jwplatform.com/libraries/SAHhwvZq.js"></script> 
+  <style> 
+    body { 
+      margin: 0; 
+    } 
+    .jwplayer { 
+      position: absolute !important; 
+    } 
+    .jwplayer.jw-flag-aspect-mode { 
+      min-height: 100%; 
+      max-height: 100%; 
+    } 
+  </style> 
+</head> 
+<body> 
+  <div id="jwplayerDiv"></div> 
+  <script> 
+       jwplayer("jwplayerDiv").setup({ 
+      file: "https://rumble.com/live-hls-dvr/6z66p4/playlist.m3u8", 
+      position: 'bottom', 
+      autostart: true, 
+      stretching: "uniform", 
+      width: "100%", 
+      type: "hls"
+     }); 
+  </script> 
+</body> 
 </html>
